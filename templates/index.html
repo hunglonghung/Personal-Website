@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to My Website</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('schedule') }}">Schedule</a></li>
+                <li><a href="{{ url_for('diary') }}">Diary</a></li>
+                <li><a href="{{ url_for('issues') }}">Issues</a></li>
+                <li><a href="{{ url_for('settings') }}">Settings</a></li>
+                
+                <br />
+                <br />
+                <br />
+                <li><a href="{{ url_for('useful_links') }}">Useful Links</a></li>
+                <li><a href="{{ url_for('study_time') }}">Study Time Record</a></li>
+                <li><a href="{{ url_for('rules') }}">Rules</a></li>
+                <li><a href="{{ url_for('projects') }}">Projects</a></li>
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>

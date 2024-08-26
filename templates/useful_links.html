@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Useful Links</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Useful Links</h1>
+        <form method="POST">
+            <input type="text" name="link" placeholder="Enter the URL..." required>
+            <textarea name="comment" placeholder="Enter a comment (optional)..."></textarea>
+            <button type="submit">Add Link</button>
+        </form>
+        <ul>
+            {% for link in links %}
+                <li>
+                    <div><a href="{{ link.link }}" target="_blank">{{ link.link }}</a> - {{ link.comment }}</div>
+                    <form id="delete-form-{{ link.id }}" action="{{ url_for('delete_link', id=link.id) }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="password">
+                        <a href="#" onclick="confirmDelete(event, {{ link.id }})">Delete</a>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <button onclick="window.location.href='{{ url_for('index') }}'">Back</button>
+    </div>
+</body>
+</html>
+<script>
+    function confirmDelete(event, id) {
+        event.preventDefault();
+        var password = prompt("Please enter your password to confirm deletion:");
+        if (password != null) {
+            document.getElementById('delete-form-' + id).password.value = password;
+            document.getElementById('delete-form-' + id).submit();
+        }
+    }
+</script>
+

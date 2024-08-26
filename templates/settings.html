@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Settings</h1>
+        <form method="POST">
+            <input type="password" name="password" placeholder="Set new password" required>
+            <button type="submit">Save Password</button>
+        </form>
+        <button onclick="window.location.href='{{ url_for('index') }}'">Back</button>
+    </div>
+</body>
+</html>

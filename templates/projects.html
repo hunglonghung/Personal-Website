@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Projects</h1>
+        <form method="POST">
+            <input type="text" name="name" placeholder="Project name" required>
+            <input type="text" name="link" placeholder="Project link (optional)">
+            <button type="submit">Add Project</button>
+        </form>
+        <ul>
+            {% for project in projects %}
+                <li>
+                    <div><a href="{{ url_for('project', id=project.id) }}">{{ project.name }}</a></div>
+                    <div>Progress: {{ project.progress }}%</div>
+                </li>
+            {% endfor %}
+        </ul>
+        <button onclick="window.location.href='{{ url_for('index') }}'">Back</button>
+    </div>
+</body>
+</html>

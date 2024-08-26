@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ project.name }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Căn chỉnh container */
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tiêu đề của dự án */
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Đường dẫn dự án */
+        a {
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Form thêm subtask */
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        form input[type="text"], form select {
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            margin-right: 10px;
+        }
+
+        form button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #218838;
+        }
+
+        /* Danh sách subtask */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Căn chỉnh tên và trạng thái subtask */
+        ul li div {
+            flex: 1;
+            margin-right: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Form cập nhật subtask */
+        ul li form {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        ul li form input[type="text"] {
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            width: 150px;
+        }
+
+        ul li form select {
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        ul li form button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        ul li form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Nút Delete */
+        ul li form:nth-child(2) button {
+            background-color: #dc3545;
+            margin-left: 10px;
+        }
+
+        ul li form:nth-child(2) button:hover {
+            background-color: #c82333;
+        }
+
+        /* Nút trở về Projects */
+        .container button {
+            display: block;
+            width: 100%;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .container button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ project.name }}</h1>
+        <a href="{{ project.link }}">Project Link</a>
+        <form method="POST">
+            <input type="text" name="name" placeholder="Subtask name" required>
+            <select name="state">
+                <option value="Not yet">Not yet</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Done">Done</option>
+            </select>
+            <select name="parent_id">
+                <option value="">No Parent</option>
+                {% for subtask in subtasks %}
+                    <option value="{{ subtask.id }}">{{ subtask.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Add Subtask</button>
+        </form>
+        <ul>
+            {% for subtask in subtasks %}
+                <li>
+                    <div>{{ subtask.name }} - {{ subtask.state }}</div>
+                    <form action="{{ url_for('update_subtask', id=project.id, subtask_id=subtask.id) }}" method="POST">
+                        <input type="text" name="name" value="{{ subtask.name }}" required>
+                        <select name="state">
+                            <option value="Not yet" {% if subtask.state == 'Not yet' %}selected{% endif %}>Not yet</option>
+                            <option value="Ongoing" {% if subtask.state == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+                            <option value="Done" {% if subtask.state == 'Done' %}selected{% endif %}>Done</option>
+                        </select>
+                        <button type="submit">Update</button>
+                    </form>
+                    <form action="{{ url_for('delete_subtask', id=project.id, subtask_id=subtask.id) }}" method="POST">
+                        <button type="submit">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <button onclick="window.location.href='{{ url_for('projects') }}'">Back to Projects</button>
+    </div>
+</body>
+</html>

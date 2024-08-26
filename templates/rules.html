@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rules</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Rules</h1>
+        <form method="POST">
+            <textarea name="content" placeholder="Enter your rule..." required></textarea>
+            <input type="text" name="category" placeholder="Category (e.g., Self-Control, Sleep)" required>
+            <button type="submit">Add Rule</button>
+        </form>
+        <ul>
+            {% for rule in rules %}
+                <li>
+                    <div><strong>{{ rule.category }}:</strong> {{ rule.content }}</div>
+                    <form id="delete-form-{{ rule.id }}" action="{{ url_for('delete_rule', id=rule.id) }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="password">
+                        <a href="#" onclick="confirmDelete(event, {{ rule.id }})">Delete</a>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <button onclick="window.location.href='{{ url_for('index') }}'">Back</button>
+    </div>
+</body>
+</html>
+<script>
+    function confirmDelete(event, id) {
+        event.preventDefault();
+        var password = prompt("Please enter your password to confirm deletion:");
+        if (password != null) {
+            document.getElementById('delete-form-' + id).password.value = password;
+            document.getElementById('delete-form-' + id).submit();
+        }
+    }
+</script>

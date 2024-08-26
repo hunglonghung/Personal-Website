@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Time Record</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .record-details {
+            display: none;
+            margin-top: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Study Time Record</h1>
+        <form method="POST">
+            <label for="start_time">Start Time:</label>
+            <input type="datetime-local" id="start_time" name="start_time" required>
+            
+            <label for="end_time">End Time:</label>
+            <input type="datetime-local" id="end_time" name="end_time" required>
+            
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" placeholder="e.g., Study, Distract, Relax" required>
+            
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" placeholder="What did you do? (optional)"></textarea>
+
+            <!-- Hidden input to maintain selected date -->
+            <input type="hidden" name="selected_date" id="selected_date" value="{{ selected_date }}">
+            
+            <button type="submit">Add Record</button>
+        </form>
+
+        <label for="date-select">Select a Date:</label>
+        <select id="date-select" onchange="showRecords(this.value)">
+            <option value="">-- Select a Date --</option>
+            {% for date in records_by_date.keys() %}
+                <option value="{{ date }}" {% if date.isoformat() == selected_date %}selected{% endif %}>{{ date.strftime('%B %d, %Y') }}</option>
+            {% endfor %}
+        </select>
+
+        {% for date, records in records_by_date.items() %}
+            <div class="record-details" id="records-{{ date }}" {% if date.isoformat() == selected_date %}style="display: block;"{% endif %}>
+                <h2>{{ date.strftime('%B %d, %Y') }}</h2>
+                <ul>
+                    {% for record in records %}
+                        <li>
+                            <div>{{ record.start_time.strftime('%H:%M') }} - {{ record.end_time.strftime('%H:%M') }} | <strong>{{ record.category }}:</strong> {{ record.description }}</div>
+                            <form id="delete-form-{{ record.id }}" action="{{ url_for('delete_record', id=record.id) }}" method="POST" style="display:inline;">
+                                <input type="hidden" name="password">
+                                <a href="#" onclick="confirmDelete(event, {{ record.id }})">Delete</a>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+        <button onclick="window.location.href='{{ url_for('index') }}'">Back</button>
+    </div>
+    <script>
+        function showRecords(date) {
+            // Hide all record details
+            var recordDetails = document.querySelectorAll('.record-details');
+            recordDetails.forEach(function(detail) {
+                detail.style.display = 'none';
+            });
+
+            // Show the selected date's records
+            if (date) {
+                var selectedRecords = document.getElementById('records-' + date);
+                if (selectedRecords) {
+                    selectedRecords.style.display = 'block';
+                    document.getElementById('selected_date').value = date;
+                }
+            }
+        }
+
+        function confirmDelete(event, id) {
+            event.preventDefault();
+            var password = prompt("Please enter your password to confirm deletion:");
+            if (password != null) {
+                document.getElementById('delete-form-' + id).password.value = password;
+                document.getElementById('delete-form-' + id).submit();
+            }
+        }
+
+        // Set the selected date on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            var selectedDate = "{{ selected_date }}";
+            if (selectedDate) {
+                showRecords(selectedDate);
+            }
+        });
+    </script>
+</body>
+</html>
